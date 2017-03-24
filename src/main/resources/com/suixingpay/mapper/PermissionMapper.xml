@@ -1,0 +1,47 @@
+<?xml version="1.0"  encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suixingpay.mapper.PermissionMapper">
+    <resultMap type="com.suixingpay.bean.Permission" id="Result">
+    	<id property="id" column="p_id"/>
+    	<result property="name" column="p_name"/>
+    	<result property="code" column="p_code"/>
+    </resultMap>
+    
+    <select id="findAllPermission" resultMap="Result">
+    	select p_id,p_name,p_code from t_permission
+    </select>
+    
+    <insert id="insertPermission" parameterType="com.suixingpay.bean.Permission">
+    	insert into t_permission(p_id,p_name,p_code) values(permission_autoinc.nextval,#{name},#{code})
+    </insert>
+    
+    <select id="findPermissionByRoleId" resultMap="Result">
+    	select distinct p.p_id as p_id,p.p_name as p_name,p.p_code as p_code 
+    	from t_permission p,t_role_permission rp
+    	where p.p_id=rp.p_id 
+    	and rp.role_id in
+    	<foreach collection="roleIds" item="ids" open="(" separator="," close=")">
+    		#{ids}
+    	</foreach>
+    </select>
+    
+    <delete id="deletePermission">
+    	delete from t_permission where p_id=#{id}
+    </delete>
+    
+    <delete id="deleteRolePermission">
+    	delete from t_role_permission where p_id=#{id}
+    </delete>
+    
+    <select id="findPermissionById" resultMap="Result">
+    	select p_id,p_name,p_code from t_permission where p_id=#{id}
+    </select>
+    
+    <update id="updatePermission">
+    	update t_permission set p_name=#{name} where p_id=#{id}
+    </update>
+    
+    <select id="findPermissionByOneRoleId" resultMap="Result">
+    	select t_permission.p_id as p_id,p_name,p_code from t_permission,t_role_permission where role_id=#{role_id} and t_permission.p_id = t_role_permission.p_id
+    </select>
+</mapper>

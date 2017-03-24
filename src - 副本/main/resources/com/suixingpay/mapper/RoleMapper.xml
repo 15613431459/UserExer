@@ -1,0 +1,36 @@
+<?xml version="1.0"  encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suixingpay.mapper.RoleMapper">
+	<resultMap type="com.suixingpay.bean.Role" id="roleResult">
+		<id property="id" column="role_id"></id>
+		<result property="name" column="role_name"></result>
+		<result property="code" column="role_code"></result>
+	</resultMap>
+	<select id="findAllRole" resultMap="roleResult">
+		select role_id,role_name,role_code from t_role
+	</select>
+	<select id="findRoleByUserId" resultMap="roleResult">
+		select t_role.role_id,role_name,role_code from t_role,t_user_role where user_id = #{userId} and t_role.role_id = t_user_role.role_id
+	</select>
+	<select id="findRoleById" resultMap="roleResult">
+		select role_id,role_name,role_code from t_role where role_id = #{id}
+	</select>
+	<delete id="deleteRole">
+		delete from t_role where role_id = #{id}
+	</delete>
+	<delete id="deleteRolePermissionByRoleId">
+		delete from t_role_permission where role_id = #{id}
+	</delete>
+	<insert id="addRole" parameterType="com.suixingpay.bean.Role">
+		<selectKey keyProperty="id" resultType="int" order="BEFORE">  
+	    	select role_autoinc.nextval from dual  
+	     </selectKey>  
+		insert into t_role(role_id,role_name,role_code) values(${id},#{name},#{code})
+	</insert>
+	<insert id="addRolePermission">
+		insert into t_role_permission(id,role_id,p_id) values(randp_autoinc.nextval,#{roleId},#{permissionId})
+	</insert>
+	<update id="updateRole" parameterType="com.suixingpay.bean.Role">
+		update t_role set role_name = #{name} where role_id = #{id}
+	</update>	
+</mapper>
